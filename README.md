@@ -12,4 +12,4 @@ License:
 You may freely distribute this for any purpose. Note that MonoMod files are needed for succesful execution, and different licensing rules may apply to those.
 
 ## See also:
-[LighterPatcher](https://github.com/harbingerofme/LighterPatcher) which is designed to easy the load on the game when having particularily large MMHOOK files by stripping unneeded types. LgihterPatcher and HookGenPatcher work in conjuction with each other to prevent multiple runs.
+[LighterPatcher](https://github.com/harbingerofme/LighterPatcher) which is designed to easy the load on the game when having particularily large MMHOOK files by stripping unneeded types. LighterPatcher and HookGenPatcher work in conjuction with each other to prevent multiple runs.
