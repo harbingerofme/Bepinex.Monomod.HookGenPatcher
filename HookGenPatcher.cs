@@ -22,6 +22,16 @@ namespace BepInEx.MonoMod.HookGenPatcher
             string pathIn = Path.Combine(Paths.ManagedPath, "Assembly-CSharp.dll");
             string pathOut = Path.Combine(Paths.PluginPath, "MMHOOK_Assembly-CSharp.dll");
 
+            foreach(string mmhookFile in Directory.EnumerateFiles(Paths.PluginPath, "MMHOOK_Assembly-CSharp.dll",SearchOption.AllDirectories))
+            {
+                if (Path.GetFileName(mmhookFile).Equals("MMHOOK_Assembly-CSharp.dll"))
+                {
+                    pathOut = mmhookFile;
+                    Logger.LogInfo("Previous MMHOOK location found. Using that location to save instead.");
+                    break;
+                }
+            }
+
             var size = new FileInfo(pathIn).Length;
 
             if (File.Exists(pathOut))
