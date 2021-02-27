@@ -31,12 +31,15 @@ namespace BepInEx.MonoMod.HookGenPatcher
         {
             var assemblyNames = AssemblyNamesToHookGenPatch.Value.Split(EntrySeparator);
 
+            var mmhookFolder = Path.Combine(Paths.PluginPath, "MMHOOK");
+            Directory.CreateDirectory(mmhookFolder);
+
             foreach (var customAssemblyName in assemblyNames)
             {
                 var mmhookFileName = "MMHOOK_" + customAssemblyName;
 
                 string pathIn = Path.Combine(Paths.ManagedPath, customAssemblyName);
-                string pathOut = Path.Combine(Paths.PluginPath, mmhookFileName);
+                string pathOut = Path.Combine(mmhookFolder, mmhookFileName);
 
                 foreach (string mmhookFile in Directory.EnumerateFiles(Paths.PluginPath, mmhookFileName, SearchOption.AllDirectories))
                 {
@@ -58,7 +61,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
                         if (hash)
                         {
                             Logger.LogInfo("Already ran for this version, reusing that file.");
-                            return;
+                            continue;
                         }
                     }
                 }
