@@ -14,8 +14,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
 
         private const string CONFIG_FILE_NAME = "HookGenPatcher.cfg";
 
-        private static readonly ConfigFile Config =
-            new(Path.Combine(Paths.ConfigPath, CONFIG_FILE_NAME), true);
+        private static readonly ConfigFile Config = new ConfigFile(Path.Combine(Paths.ConfigPath, CONFIG_FILE_NAME), true);
 
         private const char EntrySeparator = ',';
 
@@ -32,7 +31,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
             var assemblyNames = AssemblyNamesToHookGenPatch.Value.Split(EntrySeparator);
 
             var mmhookFolder = Path.Combine(Paths.PluginPath, "MMHOOK");
-            Directory.CreateDirectory(mmhookFolder);
+
 
             foreach (var customAssemblyName in assemblyNames)
             {
@@ -40,6 +39,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
 
                 string pathIn = Path.Combine(Paths.ManagedPath, customAssemblyName);
                 string pathOut = Path.Combine(mmhookFolder, mmhookFileName);
+                bool shouldCreateDirectory = true;
 
                 foreach (string mmhookFile in Directory.EnumerateFiles(Paths.PluginPath, mmhookFileName, SearchOption.AllDirectories))
                 {
@@ -47,10 +47,15 @@ namespace BepInEx.MonoMod.HookGenPatcher
                     {
                         pathOut = mmhookFile;
                         Logger.LogInfo("Previous MMHOOK location found. Using that location to save instead.");
+                        shouldCreateDirectory = false;
                         break;
                     }
                 }
 
+                if(shouldCreateDirectory)
+                {
+                    Directory.CreateDirectory(mmhookFolder);
+                }
                 var size = new FileInfo(pathIn).Length;
 
                 if (File.Exists(pathOut))
@@ -95,7 +100,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
                     using (ModuleDefinition mOut = gen.OutputModule)
                     {
                         gen.Generate();
-                        mOut.Types.Add(new TypeDefinition("BepHookGen", "hash" + size, Mono.Cecil.TypeAttributes.AutoClass));
+                        mOut.Types.Add(new TypeDefinition("BepHookGen", "hash" + size, TypeAttributes.AutoClass));
                         mOut.Write(pathOut);
                     }
 
