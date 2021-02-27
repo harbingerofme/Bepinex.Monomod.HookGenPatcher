@@ -20,7 +20,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
         private const char EntrySeparator = ',';
 
         private static readonly ConfigEntry<string> AssemblyNamesToHookGenPatch = Config.Bind("General", "MMHOOKAssemblyNames",
-            "Assembly-CSharp.dll", $"Assembly names to make mmhooks for, separate entries with : ${EntrySeparator} ");
+            "Assembly-CSharp.dll", $"Assembly names to make mmhooks for, separate entries with : {EntrySeparator} ");
 
         public static IEnumerable<string> TargetDLLs { get; } = new string[] { };
 
