@@ -32,7 +32,6 @@ namespace BepInEx.MonoMod.HookGenPatcher
 
             var mmhookFolder = Path.Combine(Paths.PluginPath, "MMHOOK");
 
-
             foreach (var customAssemblyName in assemblyNames)
             {
                 var mmhookFileName = "MMHOOK_" + customAssemblyName;
@@ -60,14 +59,21 @@ namespace BepInEx.MonoMod.HookGenPatcher
 
                 if (File.Exists(pathOut))
                 {
-                    using (var oldMM = AssemblyDefinition.ReadAssembly(pathOut))
+                    try
                     {
-                        bool hash = oldMM.MainModule.GetType("BepHookGen.hash" + size) != null;
-                        if (hash)
+                        using (var oldMM = AssemblyDefinition.ReadAssembly(pathOut))
                         {
-                            Logger.LogInfo("Already ran for this version, reusing that file.");
-                            continue;
+                            bool hash = oldMM.MainModule.GetType("BepHookGen.hash" + size) != null;
+                            if (hash)
+                            {
+                                Logger.LogInfo("Already ran for this version, reusing that file.");
+                                continue;
+                            }
                         }
+                    }
+                    catch (BadImageFormatException)
+                    {
+                        Logger.LogWarning($"Failed to read {Path.GetFileName(pathOut)}, probably corrupted, remaking one.");
                     }
                 }
 
