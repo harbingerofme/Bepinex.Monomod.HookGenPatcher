@@ -26,12 +26,12 @@ namespace BepInEx.MonoMod.HookGenPatcher
         /**
          * Code largely based on https://github.com/MonoMod/MonoMod/blob/master/MonoMod.RuntimeDetour.HookGen/Program.cs
          */
+
         public static void Initialize()
         {
             var assemblyNames = AssemblyNamesToHookGenPatch.Value.Split(EntrySeparator);
 
             var mmhookFolder = Path.Combine(Paths.PluginPath, "MMHOOK");
-
 
             foreach (var customAssemblyName in assemblyNames)
             {
@@ -52,7 +52,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
                     }
                 }
 
-                if(shouldCreateDirectory)
+                if (shouldCreateDirectory)
                 {
                     Directory.CreateDirectory(mmhookFolder);
                 }
@@ -60,14 +60,21 @@ namespace BepInEx.MonoMod.HookGenPatcher
 
                 if (File.Exists(pathOut))
                 {
-                    using (var oldMM = AssemblyDefinition.ReadAssembly(pathOut))
+                    try
                     {
-                        bool hash = oldMM.MainModule.GetType("BepHookGen.hash" + size) != null;
-                        if (hash)
+                        using (var oldMM = AssemblyDefinition.ReadAssembly(pathOut))
                         {
-                            Logger.LogInfo("Already ran for this version, reusing that file.");
-                            continue;
+                            bool hash = oldMM.MainModule.GetType("BepHookGen.hash" + size) != null;
+                            if (hash)
+                            {
+                                Logger.LogInfo("Already ran for this version, reusing that file.");
+                                continue;
+                            }
                         }
+                    }
+                    catch (BadImageFormatException)
+                    {
+                        Logger.LogWarning($"Failed to read {Path.GetFileName(pathOut)}, probably corrupted, remaking one.");
                     }
                 }
 
@@ -81,7 +88,6 @@ namespace BepInEx.MonoMod.HookGenPatcher
                     ReadingMode = ReadingMode.Deferred
                 })
                 {
-
                     (mm.AssemblyResolver as BaseAssemblyResolver)?.AddSearchDirectory(Paths.BepInExAssemblyDirectory);
 
                     mm.Read();
@@ -111,7 +117,6 @@ namespace BepInEx.MonoMod.HookGenPatcher
 
         public static void Patch(AssemblyDefinition _)
         {
-
         }
     }
 }
