@@ -26,6 +26,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
         /**
          * Code largely based on https://github.com/MonoMod/MonoMod/blob/master/MonoMod.RuntimeDetour.HookGen/Program.cs
          */
+
         public static void Initialize()
         {
             var assemblyNames = AssemblyNamesToHookGenPatch.Value.Split(EntrySeparator);
@@ -51,7 +52,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
                     }
                 }
 
-                if(shouldCreateDirectory)
+                if (shouldCreateDirectory)
                 {
                     Directory.CreateDirectory(mmhookFolder);
                 }
@@ -87,7 +88,6 @@ namespace BepInEx.MonoMod.HookGenPatcher
                     ReadingMode = ReadingMode.Deferred
                 })
                 {
-
                     (mm.AssemblyResolver as BaseAssemblyResolver)?.AddSearchDirectory(Paths.BepInExAssemblyDirectory);
 
                     mm.Read();
@@ -117,7 +117,6 @@ namespace BepInEx.MonoMod.HookGenPatcher
 
         public static void Patch(AssemblyDefinition _)
         {
-
         }
     }
 }
