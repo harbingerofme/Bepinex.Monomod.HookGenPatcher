@@ -5,6 +5,7 @@ using MonoMod.RuntimeDetour.HookGen;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace BepInEx.MonoMod.HookGenPatcher
 {
@@ -20,6 +21,9 @@ namespace BepInEx.MonoMod.HookGenPatcher
 
         private static readonly ConfigEntry<string> AssemblyNamesToHookGenPatch = Config.Bind("General", "MMHOOKAssemblyNames",
             "Assembly-CSharp.dll", $"Assembly names to make mmhooks for, separate entries with : {EntrySeparator} ");
+
+        private static readonly ConfigEntry<bool> preciseHash = Config.Bind<bool>("General", "Preciser filehashing", false, "Hash file using contents instead of size. Minor perfomance impact.");
+        private static bool skipHashing => !preciseHash.Value;
 
         public static IEnumerable<string> TargetDLLs { get; } = new string[] { };
 
@@ -56,7 +60,10 @@ namespace BepInEx.MonoMod.HookGenPatcher
                 {
                     Directory.CreateDirectory(mmhookFolder);
                 }
-                var size = new FileInfo(pathIn).Length;
+
+                var fileInfo = new FileInfo(pathIn);
+                var size = fileInfo.Length;
+                long hash = 0;
 
                 if (File.Exists(pathOut))
                 {
@@ -64,11 +71,21 @@ namespace BepInEx.MonoMod.HookGenPatcher
                     {
                         using (var oldMM = AssemblyDefinition.ReadAssembly(pathOut))
                         {
-                            bool hash = oldMM.MainModule.GetType("BepHookGen.hash" + size) != null;
-                            if (hash)
+                            bool mmSizeHash = oldMM.MainModule.GetType("BepHookGen.size" + size) != null;
+                            if (mmSizeHash)
                             {
-                                Logger.LogInfo("Already ran for this version, reusing that file.");
-                                continue;
+                                if (skipHashing)
+                                {
+                                    Logger.LogInfo("Already ran for this version, reusing that file.");
+                                    continue;
+                                }
+                                hash = fileInfo.makeHash();
+                                bool mmContentHash = oldMM.MainModule.GetType("BepHookGen.content" + hash) != null;
+                                if (mmContentHash)
+                                {
+                                    Logger.LogInfo("Already ran for this version, reusing that file.");
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -106,7 +123,11 @@ namespace BepInEx.MonoMod.HookGenPatcher
                     using (ModuleDefinition mOut = gen.OutputModule)
                     {
                         gen.Generate();
-                        mOut.Types.Add(new TypeDefinition("BepHookGen", "hash" + size, TypeAttributes.AutoClass));
+                        mOut.Types.Add(new TypeDefinition("BepHookGen", "size" + size, TypeAttributes.AutoClass));
+                        if (!skipHashing)
+                        {
+                            mOut.Types.Add(new TypeDefinition("BepHookGen", "content" + (hash == 0 ? fileInfo.makeHash() : hash), TypeAttributes.AutoClass));
+                        }
                         mOut.Write(pathOut);
                     }
 
@@ -117,6 +138,18 @@ namespace BepInEx.MonoMod.HookGenPatcher
 
         public static void Patch(AssemblyDefinition _)
         {
+        }
+
+        private static long makeHash(this FileInfo fileInfo)
+        {
+            var fileStream = fileInfo.OpenRead();
+            byte[] hashbuffer = null;
+            using (MD5 md5 = new MD5CryptoServiceProvider())
+            {
+                hashbuffer = md5.ComputeHash(fileStream);
+            }
+            long hash = BitConverter.ToInt64(hashbuffer, 0);
+            return hash != 0 ? hash : 1;
         }
     }
 }
