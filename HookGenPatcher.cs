@@ -45,7 +45,7 @@ namespace BepInEx.MonoMod.HookGenPatcher
                 string pathOut = Path.Combine(mmhookFolder, mmhookFileName);
                 bool shouldCreateDirectory = true;
 
-                foreach (string mmhookFile in Directory.EnumerateFiles(Paths.PluginPath, mmhookFileName, SearchOption.AllDirectories))
+                foreach (string mmhookFile in Directory.GetFiles(Paths.PluginPath, mmhookFileName, SearchOption.AllDirectories))
                 {
                     if (Path.GetFileName(mmhookFile).Equals(mmhookFileName))
                     {
