@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Bepinex.Monomod.HookGenPatcher")]
-[assembly: AssemblyDescription("Runtime hookgen for bepinex")]
+[assembly: AssemblyDescription("Runtime HookGen for BepInEx")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("HarbingerOfMe")]
 [assembly: AssemblyProduct("Bepinex.Monomod.HookGenPatcher")]
-[assembly: AssemblyCopyright("HarbingerOfMe2020")]
+[assembly: AssemblyCopyright("HarbingerOfMe-2022")]
 [assembly: AssemblyTrademark("MIT")]
 [assembly: AssemblyCulture("")]
 
@@ -32,6 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.0.0")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
-[assembly: NeutralResourcesLanguage("")]
+[assembly: AssemblyVersion("1.2.1.0")]
+[assembly: AssemblyFileVersion("1.2.1.0")]
+[assembly: NeutralResourcesLanguage("en")] 
