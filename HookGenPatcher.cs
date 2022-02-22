@@ -123,10 +123,10 @@ namespace BepInEx.MonoMod.HookGenPatcher
                     using (ModuleDefinition mOut = gen.OutputModule)
                     {
                         gen.Generate();
-                        mOut.Types.Add(new TypeDefinition("BepHookGen", "size" + size, TypeAttributes.AutoClass));
+                        mOut.Types.Add(new TypeDefinition("BepHookGen", "size" + size, TypeAttributes.Class | TypeAttributes.Public, mOut.TypeSystem.Object));
                         if (!skipHashing)
                         {
-                            mOut.Types.Add(new TypeDefinition("BepHookGen", "content" + (hash == 0 ? fileInfo.makeHash() : hash), TypeAttributes.AutoClass));
+                            mOut.Types.Add(new TypeDefinition("BepHookGen", "content" + (hash == 0 ? fileInfo.makeHash() : hash), TypeAttributes.Class | TypeAttributes.Public, mOut.TypeSystem.Object));
                         }
                         mOut.Write(pathOut);
                     }
