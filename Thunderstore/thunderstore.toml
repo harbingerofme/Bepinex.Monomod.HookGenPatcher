@@ -1,0 +1,52 @@
+[config]
+schemaVersion = "0.0.1"
+
+[general]
+repository = "https://thunderstore.io"
+
+[package]
+description = "Automatically generates MonoMod.RuntimeDetour.HookGen's MMHOOK files during the BepInEx preloader phase."
+websiteUrl = "https://github.com/Hamunii/BepInEx.MonoMod.AutoHookGenPatcher"
+containsNsfwContent = false
+[package.dependencies]
+BepInEx-BepInExPack = "5.4.2100"
+Hamunii-DetourContext_Dispose_Fix = "1.0.5"
+
+[build]
+icon = "./icon.png"
+readme = "./README.md"
+outdir = "./Packages"
+
+[[build.copy]]
+source = "./CHANGELOG.md"
+target = "/"
+
+[[build.copy]]
+source = "../LICENSE"
+target = "/"
+
+[[build.copy]]
+source = "../bin/Release/netstandard2.0/BepInEx.MonoMod.AutoHookGenPatcher.dll"
+target = "/BepInEx/patchers/"
+
+[[build.copy]]
+source = "./libs/MonoMod.dll"
+target = "/BepInEx/core/"
+
+[[build.copy]]
+source = "./libs/MonoMod.RuntimeDetour.HookGen.dll"
+target = "/BepInEx/core/"
+
+[publish]
+categories = ["tools"]
+# Get the list of communities from https://thunderstore.io/api/experimental/community/
+communities = [
+    "lethal-company",
+    "content-warning",
+    "plasma",
+    "gloomwood",
+    "repo",
+    "peak",
+    "hollow-knight-silksong",
+    "peglin",
+]

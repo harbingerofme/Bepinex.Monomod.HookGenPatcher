@@ -353,5 +353,8 @@ libs/*.dll
 libs/*.xml
 LighterPatcher/libs/*.dll
 
+# vscode config
+.vscode
+
 # Thunderstore Stuff
 Thunderstore/*.zip
